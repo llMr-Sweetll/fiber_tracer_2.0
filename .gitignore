@@ -235,3 +235,6 @@ checkpoint/
 docs/_build/
 docs/_static/
 docs/_templates/
+
+# Asset Generation Scripts
+generate_assets.py
