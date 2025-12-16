@@ -143,6 +143,60 @@ class PremiumReportGenerator:
         }
         """
 
+    def _generate_plot_html(self, fibers: List[Dict[str, Any]]) -> str:
+        """Generates the HTML string for the interactive 3D plot."""
+        try:
+            import plotly.graph_objects as go
+            import pandas as pd
+            
+            if not fibers:
+                return "<div style='text-align:center; padding: 2rem; color: #94a3b8;'>No fiber data available for visualization</div>"
+                
+            df = pd.DataFrame(fibers)
+            
+            # Check required columns
+            required_cols = ['Centroid X (μm)', 'Centroid Y (μm)', 'Centroid Z (μm)', 'Length (μm)']
+            if not all(col in df.columns for col in required_cols):
+                 return "<div style='text-align:center; padding: 2rem; color: #f59e0b;'>Missing data fields for 3D visualization</div>"
+
+            fig = go.Figure(data=[go.Scatter3d(
+                x=df['Centroid X (μm)'],
+                y=df['Centroid Y (μm)'],
+                z=df['Centroid Z (μm)'],
+                mode='markers',
+                marker=dict(
+                    size=3,
+                    color=df['Length (μm)'],
+                    colorscale='Viridis',
+                    showscale=True,
+                    colorbar=dict(title="Length (μm)"),
+                    opacity=0.8
+                ),
+                text=[f"ID: {row.get('Fiber ID', 'N/A')}<br>Length: {row.get('Length (μm)', 0):.1f}" for _, row in df.iterrows()],
+                hoverinfo='text'
+            )])
+            
+            fig.update_layout(
+                title='Interactive 3D Fiber Network',
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#f8fafc', family="Inter"),
+                scene=dict(
+                    xaxis=dict(title='X (μm)', gridcolor='rgba(255,255,255,0.1)', showbackground=False),
+                    yaxis=dict(title='Y (μm)', gridcolor='rgba(255,255,255,0.1)', showbackground=False),
+                    zaxis=dict(title='Z (μm)', gridcolor='rgba(255,255,255,0.1)', showbackground=False),
+                ),
+                margin=dict(l=0, r=0, b=0, t=40),
+                height=500
+            )
+            
+            return fig.to_html(full_html=False, include_plotlyjs='cdn')
+            
+        except ImportError:
+            return "<div style='text-align:center; padding: 2rem; color: #f59e0b;'>Plotly not installed. Visualization disabled.</div>"
+        except Exception as e:
+            return f"<div style='text-align:center; padding: 2rem; color: #ef4444;'>Error generating visualization: {str(e)}</div>"
+
     def generate(self, stats: Dict[str, Any], fibers: List[Dict[str, Any]] = None):
         """Generates the HTML report."""
         
@@ -154,6 +208,9 @@ class PremiumReportGenerator:
         vf = stats.get('volume_fraction', 0)
         density_text = "High Density" if vf > 10 else "Low Density"
         
+        # Generate 3D Plot
+        plot_html = self._generate_plot_html(fibers)
+        
         html = f"""
         <!DOCTYPE html>
         <html lang="en">
@@ -163,6 +220,7 @@ class PremiumReportGenerator:
             <title>Fiber Analysis Report</title>
             <style>{self.css}</style>
             <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         </head>
         <body>
             <div class="container">
@@ -205,8 +263,9 @@ class PremiumReportGenerator:
                 <div class="card">
                     <h2 style="margin-top: 0;">Interactive Visualization</h2>
                     <p style="color: #94a3b8;">3D Reconstruction of Fiber Network using HT3 Algorithm</p>
-                    <!-- Functionality to embed or link the Plotly HTML would go here -->
-                    <iframe src="fiber_3d_interactive.html" class="iframe-container" title="3D Visualization"></iframe>
+                    <div class="iframe-container" style="background: rgba(0,0,0,0.2);">
+                        {plot_html}
+                    </div>
                 </div>
                 
                 <div class="card" style="margin-top: 2rem;">
@@ -266,14 +325,29 @@ class PremiumReportGenerator:
 
 # Example Usage Stub
 if __name__ == "__main__":
-    # Mock data for testing
+    import random
+    
+    # Mock stats
     mock_stats = {
-        'total_fibers': 1245,
+        'total_fibers': 150,
         'volume_fraction': 12.5,
         'diameter_stats': {'mean': 5.2, 'std': 1.1, 'min': 2.0, 'max': 8.5},
         'length_stats': {'mean': 150.4, 'std': 45.2, 'min': 20.0, 'max': 300.0},
         'orientation_stats': {'mean': 12.4, 'std': 5.6, 'min': 0.0, 'max': 88.0},
         'tortuosity_stats': {'mean': 1.05, 'std': 0.02, 'min': 1.0, 'max': 1.2}
     }
+    
+    # Generate mock fiber data for visualization
+    mock_fibers = []
+    for i in range(150):
+        mock_fibers.append({
+            'Fiber ID': i,
+            'Centroid X (μm)': random.uniform(0, 100),
+            'Centroid Y (μm)': random.uniform(0, 100),
+            'Centroid Z (μm)': random.uniform(0, 100),
+            'Length (μm)': random.uniform(50, 200),
+        })
+        
     generator = PremiumReportGenerator(".")
-    generator.generate(mock_stats)
+    generator.generate(mock_stats, mock_fibers)
+
