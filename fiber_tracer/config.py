@@ -35,6 +35,7 @@ class SegmentationConfig:
     min_object_size: int = 500
     adaptive_threshold: bool = True
     fill_holes: bool = True
+    use_structure_tensor: bool = False  # Enable Structure Tensor enhancement
     
 
 @dataclass
@@ -46,6 +47,7 @@ class FiberAnalysisConfig:
     angle_bins: List[float] = field(default_factory=lambda: list(range(0, 181, 15)))
     calculate_tortuosity: bool = True
     calculate_orientation: bool = True
+    orientation_method: str = 'structure_tensor'  # 'pca' or 'structure_tensor'
 
 
 @dataclass
