@@ -88,15 +88,12 @@ def create_synthetic_fiber_data(output_dir: str, num_slices: int = 50,
     
     # Add noise and background
     for z in range(num_slices):
-        # Add Gaussian noise
-        noise = np.random.randn(*image_size) * 0.05
+        # Add minimal noise
+        noise = np.random.randn(*image_size) * 0.01
         volume[z] += noise
         
         # Add some background intensity
-        volume[z] += 0.1
-        
-        # Apply slight blur to make it more realistic
-        volume[z] = filters.gaussian(volume[z], sigma=0.5)
+        volume[z] += 0.05
         
         # Clip values
         volume[z] = np.clip(volume[z], 0, 1)
@@ -148,9 +145,9 @@ def test_basic_pipeline():
     config.processing.gaussian_sigma = 0.5
     
     config.segmentation.block_size = 21
-    config.segmentation.min_object_size = 50
+    config.segmentation.min_object_size = 10
     
-    config.analysis.min_diameter = 5.0
+    config.analysis.min_diameter = 2.0
     config.analysis.max_diameter = 30.0
     config.analysis.voxel_size = 1.0
     

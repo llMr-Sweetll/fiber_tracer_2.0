@@ -367,7 +367,7 @@ class FiberTracer:
         """Generate a text summary report."""
         report_path = os.path.join(self.config.output_dir, 'summary_report.txt')
         
-        with open(report_path, 'w') as f:
+        with open(report_path, 'w', encoding='utf-8') as f:
             f.write("=" * 60 + "\n")
             f.write("FIBER ANALYSIS SUMMARY REPORT\n")
             f.write("=" * 60 + "\n\n")

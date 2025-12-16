@@ -1,8 +1,13 @@
-# Research Theory: Hybrid Topological-Tensor Tracing (HT3)
+# Dissertation: Hybrid Topological-Tensor Tracing (HT3)
 
-**Author:** Chandrashekhar Hegde
-**Date:** December 2025
-**Version:** 1.0 (Postdoctoral Grade)
+**Author**: Chandrashekhar Hegde
+**Date**: December 2025
+
+---
+
+## 1. Abstract
+
+This dissertation presents the Hybrid Topological-Tensor Tracing (HT3) algorithm, a novel framework for the robust analysis of fibrous microstructures. HT3 integrates Differential Geometry for precise orientation estimation via Structure Tensor analysis with Algebraic Topology (Persistent Homology) for noise robustification and topological feature extraction. We detail the mathematical derivations, numerical integration schemes, and a quantitative validation protocol demonstrating HT3's superior performance over traditional methods, particularly in noisy environments. The framework is designed to provide high-fidelity, topologically-aware reconstructions of complex biological and material networks.
 
 ---
 

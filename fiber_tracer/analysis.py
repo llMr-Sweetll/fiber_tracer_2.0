@@ -426,7 +426,7 @@ class FiberAnalyzer:
         
         # Save based on format
         if format == 'csv':
-            df.to_csv(output_path, index=False)
+            df.to_csv(output_path, index=False, encoding='utf-8-sig')
         elif format == 'excel':
             df.to_excel(output_path, index=False)
         elif format == 'json':
