@@ -83,7 +83,7 @@ def create_synthetic_fiber_data(output_dir: str, num_slices: int = 50,
             rr, cc = draw.disk((int(current_y), int(current_x)), radius, shape=image_size)
             
             # Add intensity variation
-            intensity = np.random.uniform(0.6, 1.0)
+            intensity = np.random.uniform(0.8, 1.0)
             volume[z, rr, cc] = np.maximum(volume[z, rr, cc], intensity)
     
     # Add noise and background
@@ -92,8 +92,8 @@ def create_synthetic_fiber_data(output_dir: str, num_slices: int = 50,
         noise = np.random.randn(*image_size) * 0.01
         volume[z] += noise
         
-        # Add some background intensity
-        volume[z] += 0.05
+        # Add minimal background intensity
+        volume[z] += 0.01
         
         # Clip values
         volume[z] = np.clip(volume[z], 0, 1)
@@ -146,6 +146,7 @@ def test_basic_pipeline():
     
     config.segmentation.block_size = 21
     config.segmentation.min_object_size = 10
+    config.segmentation.adaptive_threshold = False  # Use Otsu for clean synthetic data
     
     config.analysis.min_diameter = 2.0
     config.analysis.max_diameter = 30.0
