@@ -1,5 +1,7 @@
 """
 Configuration management for the Fiber Tracer application.
+
+Author: Chandrashekhar Hegde
 """
 
 import os

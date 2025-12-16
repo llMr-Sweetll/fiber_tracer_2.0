@@ -279,7 +279,8 @@ class FiberTracer:
             # Analyze fibers
             self.fibers = self.analyzer.analyze_fibers(
                 self.labeled_volume,
-                self.binary_volume
+                self.binary_volume,
+                grayscale_volume=self.volume
             )
             
             if not self.fibers:

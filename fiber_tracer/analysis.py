@@ -1,5 +1,7 @@
 """
 Fiber analysis module for extracting quantitative properties.
+
+Author: Chandrashekhar Hegde
 """
 
 import logging
