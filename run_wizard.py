@@ -31,17 +31,47 @@ def main():
 
     # Step 1: Input Data
     console.print("\n[bold green]STEP 1: Locate your Data[/bold green]")
-    default_dir = os.path.join(os.getcwd(), "sample_data")
-    data_dir = Prompt.ask("Enter the folder path containing your TIFF images", default=default_dir)
+    console.print("Opening folder selector...")
+    
+    try:
+        import tkinter as tk
+        from tkinter import filedialog
+        root = tk.Tk()
+        root.withdraw() # Hide small window
+        root.attributes('-topmost', True) # Bring to front
+        
+        data_dir = filedialog.askdirectory(title="Select Input Folder (TIFF Images)")
+        root.destroy()
+    except ImportError:
+        data_dir = ""
+        
+    if not data_dir:
+        default_dir = os.path.join(os.getcwd(), "sample_data")
+        data_dir = Prompt.ask("Folder selection cancelled/failed. Enter path manually", default=default_dir)
 
     while not os.path.exists(data_dir):
         console.print(f"[red]Error:[/red] The path '{data_dir}' does not exist.")
         data_dir = Prompt.ask("Please enter a valid folder path")
+        
+    console.print(f"Selected Input: [blue]{data_dir}[/blue]")
 
     # Step 2: Output Data
     console.print("\n[bold green]STEP 2: Where to save results?[/bold green]")
-    default_out = os.path.join(os.getcwd(), "results")
-    output_dir = Prompt.ask("Enter the output folder path", default=default_out)
+    
+    try:
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes('-topmost', True)
+        output_dir = filedialog.askdirectory(title="Select Output Folder")
+        root.destroy()
+    except:
+        output_dir = ""
+        
+    if not output_dir:
+        default_out = os.path.join(os.getcwd(), "results")
+        output_dir = Prompt.ask("Enter the output folder path", default=default_out)
+        
+    console.print(f"Selected Output: [blue]{output_dir}[/blue]")
 
     # Step 3: Parameters (Simplified)
     console.print("\n[bold green]STEP 3: Analysis Settings[/bold green]")

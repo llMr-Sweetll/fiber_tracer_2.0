@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
+*.pyd
 
 # C extensions
 *.so
@@ -238,3 +241,19 @@ docs/_templates/
 
 # Asset Generation Scripts
 generate_assets.py
+
+# Generated Reports and Results
+premium_report.html
+*.csv
+*.json
+!config_example.json
+!package.json
+fiber_tracer/premium_report.html
+results/
+sample_data/
+data/
+logs/
+
+# Ensure Configs are ignored but examples aren't
+config.yaml
+!config_example.yaml
