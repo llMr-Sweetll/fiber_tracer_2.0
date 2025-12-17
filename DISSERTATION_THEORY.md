@@ -156,3 +156,30 @@ We evaluate both algorithms on synthetic volumes containing fibers at known grou
 3. **Computational Topology: An Introduction**
     *Edelsbrunner, H. & Harer, J. (2010)*
     *Foundations of Persistent Homology used in the TopologicalFilter class.*
+
+---
+
+## 7. Mathematical Glossary & Notation
+
+To ensure clarity and rigor, the following table defines all variables and operators used in this derivation.
+
+| Symbol | Domain | Definition & Physical Meaning | Source / Field |
+| :--- | :--- | :--- | :--- |
+| **I(x)** | $\mathbb{R}^3 \to \mathbb{R}$ | **Volumetric Intensity**. The grayscale density value at position $\mathbf{x}$. In X-ray CT, corresponds to radiodensity. | Input Data |
+| **x** | $\mathbb{R}^3$ | **Position Vector** $[x, y, z]^T$. A coordinate in 3D Euclidean space. | Vector Calculus |
+| **G_σ** | Operator | **Gaussian Kernel** with standard deviation $\sigma$. Used for regularization (blurring) to ensure differentiability. | Signal Processing |
+| **σ (sigma)** | $\mathbb{R}^+$ | **Inner Scale**. The smoothing factor for gradient calculation. Determines the smallest feature size considered. | Scale-Space Theory |
+| **∇** | Operator | **Gradient Operator**. Measures the direction and rate of fastest intensity change. | Vector Calculus |
+| **S₀** | $3 \times 3$ Matrix | **Structure Tensor (Pointwise)**. The outer product $\nabla I \nabla I^T$. Represents local orientation at a single voxel (noisy). | Differential Geometry |
+| **ρ (rho)** | $\mathbb{R}^+$ | **Integration Scale**. The smoothing factor for the tensor field. Aggregates orientation info from a neighborhood. | Structure Tensor |
+| **S** | $3 \times 3$ Matrix | **Integrated Structure Tensor**. The smoothed tensor used for analysis. Symmetric positive-semidefinite matrix. | Differential Geometry |
+| **λ₁, λ₂, λ₃** | $\mathbb{R}_{\ge 0}$ | **Eigenvalues** of $S$. Sorted as $\lambda_1 \le \lambda_2 \le \lambda_3$. Represent the "energy" or variation in the principal directions. | Linear Algebra |
+| **e₁, e₂, e₃** | $\mathbb{R}^3$ | **Eigenvectors**. Principal directions of the local structure. $e_1$ is the fiber axis (minimum variation). | Linear Algebra |
+| **C** | $[0, 1]$ | **Confidence (Anisotropy)**. A metric indicating how "tube-like" the local structure is. 1 = Perfect Fiber, 0 = Background/Noise. | Heterogeneity Analysis |
+| **r(s)** | $\mathbb{R}^3$ | **Fiber Curve**. A continuous path through space representing the fiber's centerline. | Differential Geometry |
+| **s** | $\mathbb{R}$ | **Arc-Length**. Parameter describing distance traveled along the fiber curve. | Differential Geometry |
+| **h** | $\mathbb{R}$ | **Step Size**. The discrete distance between points in the numerical integration (RK4). | Numerical Analysis |
+| **kᵢ** | $\mathbb{R}^3$ | **RK4 Slopes**. Intermediate tangent vectors calculated to estimate the next step in the integral curve. | Runge-Kutta Methods |
+| **D** | Set | **Persistence Diagram**. A collection of birth-death pairs $(b_i, d_i)$ representing topological features. | Algebraic Topology |
+| **π** | $\mathbb{R}$ | **Persistence** or Lifetime ($d - b$). Measures the "robustness" of a topological feature against noise. | Persistent Homology |
+| **τ (tau)** | $\mathbb{R}$ | **Topological Threshold**. Minimum persistence required to classify a feature as a real fiber. | TDA |
