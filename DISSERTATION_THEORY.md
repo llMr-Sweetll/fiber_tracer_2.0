@@ -28,22 +28,36 @@ The Structure Tensor (or Second-Order Moment Matrix) extracts local orientation 
 Let $I(\mathbf{x}): \mathbb{R}^3 \to \mathbb{R}$ be the continuous intensity function of the 3D volume, where $\mathbf{x} = [x, y, z]^T$.
 
 1. **Gaussian Regularization**: To ensure differentiability and suppress noise, we first convolve the image with a Gaussian kernel $G_\sigma$:
-    $$ I_\sigma(\mathbf{x}) = (I * G_\sigma)(\mathbf{x}) $$
+
+$$
+I_\sigma(\mathbf{x}) = (I * G_\sigma)(\mathbf{x})
+$$
 
 2. **Gradient Computation**: We compute the gradient vector $\nabla I_\sigma$ at each voxel:
-    $$ \nabla I_\sigma = \begin{bmatrix} \frac{\partial I_\sigma}{\partial x} \\ \frac{\partial I_\sigma}{\partial y} \\ \frac{\partial I_\sigma}{\partial z} \end{bmatrix} $$
+
+$$
+\nabla I_\sigma = \begin{bmatrix} \frac{\partial I_\sigma}{\partial x} \\\\ \frac{\partial I_\sigma}{\partial y} \\\\ \frac{\partial I_\sigma}{\partial z} \end{bmatrix}
+$$
 
 3. **Tensor Product**: The structure tensor $S_0$ is the outer product of the gradient with itself. This rank-1 matrix captures the orientation of the normal to the local iso-surface:
-    $$ S_0 = \nabla I_\sigma \cdot \nabla I_\sigma^T = \begin{bmatrix} I_x^2 & I_x I_y & I_x I_z \\ I_y I_x & I_y^2 & I_y I_z \\ I_z I_x & I_z I_y & I_z^2 \end{bmatrix} $$
+
+$$
+S_0 = \nabla I_\sigma \cdot \nabla I_\sigma^T = \begin{bmatrix} I_x^2 & I_x I_y & I_x I_z \\\\ I_y I_x & I_y^2 & I_y I_z \\\\ I_z I_x & I_z I_y & I_z^2 \end{bmatrix}
+$$
 
 4. **Integration (Structure Tensor)**: To capture the neighborhood orientation rather than a single point's gradient (which is sensitive to noise), we smooth the tensor components with a second Gaussian kernel $G_\rho$ ($\rho \ge \sigma$):
-    $$ S = G_\rho * S_0 = \begin{bmatrix} \langle I_x^2 \rangle_\rho & \langle I_x I_y \rangle_\rho & \langle I_x I_z \rangle_\rho \\ \langle I_y I_x \rangle_\rho & \langle I_y^2 \rangle_\rho & \langle I_y I_z \rangle_\rho \\ \langle I_z I_x \rangle_\rho & \langle I_z I_y \rangle_\rho & \langle I_z^2 \rangle_\rho \end{bmatrix} $$
+
+$$
+S = G_\rho * S_0 = \begin{bmatrix} \langle I_x^2 \rangle_\rho & \langle I_x I_y \rangle_\rho & \langle I_x I_z \rangle_\rho \\\\ \langle I_y I_x \rangle_\rho & \langle I_y^2 \rangle_\rho & \langle I_y I_z \rangle_\rho \\\\ \langle I_z I_x \rangle_\rho & \langle I_z I_y \rangle_\rho & \langle I_z^2 \rangle_\rho \end{bmatrix}
+$$
 
 ### 2.2. Spectral Decomposition
 
 Since $S$ is real and symmetric, the Spectral Theorem guarantees it has orthogonal eigenvectors $e_1, e_2, e_3$ with real eigenvalues $\lambda_1 \le \lambda_2 \le \lambda_3 \ge 0$.
 
-$$ S e_i = \lambda_i e_i $$
+$$
+S e_i = \lambda_i e_i
+$$
 
 * **Interpretation**:
   * $\lambda_3$ (Largest): Corresponds to the direction of maximum intensity change (gradient direction).
@@ -53,7 +67,9 @@ $$ S e_i = \lambda_i e_i $$
 
 To distinguish fibers from isotropic background, we derive a confidence metric $C$ based on the eigenvalue distribution using the coherence measure from *Kleinnijenhuis et al. (2024)*:
 
-$$ C = \exp\left(-\frac{\lambda_1^2}{2(\frac{\lambda_2 + \lambda_3}{2})^2}\right) \cdot \left(1 - \exp\left(-\frac{\lambda_2^2 + \lambda_3^2}{2 \cdot \max(I)^2}\right)\right) $$
+$$
+C = \exp\left(-\frac{\lambda_1^2}{2(\frac{\lambda_2 + \lambda_3}{2})^2}\right) \cdot \left(1 - \exp\left(-\frac{\lambda_2^2 + \lambda_3^2}{2 \cdot \max(I)^2}\right)\right)
+$$
 
 * Term 1 favors $\lambda_1 \approx 0$ (tube-like structure).
 * Term 2 ensures non-zero signal magnitude.
@@ -68,22 +84,29 @@ Fibers are modeled as integral curves through the vector field defined by the pr
 
 The fiber path $\mathbf{r}(s)$ parametrized by arc-length $s$ satisfies the Ordinary Differential Equation (ODE):
 
-$$ \frac{d\mathbf{r}}{ds} = e_1(\mathbf{r}(s)), \quad \mathbf{r}(0) = \mathbf{r}_0 $$
+$$
+\frac{d\mathbf{r}}{ds} = e_1(\mathbf{r}(s)), \quad \mathbf{r}(0) = \mathbf{r}_0
+$$
 
 ### 3.2. Runge-Kutta 4 (RK4) Integration
 
 To solve this numerically with high accuracy, we use the 4th-order Runge-Kutta method. For a step size $h$:
 
-1. $$ \mathbf{k}_1 = e_1(\mathbf{r}_n) $$
-2. $$ \mathbf{k}_2 = e_1(\mathbf{r}_n + \frac{h}{2}\mathbf{k}_1) $$
-3. $$ \mathbf{k}_3 = e_1(\mathbf{r}_n + \frac{h}{2}\mathbf{k}_2) $$
-4. $$ \mathbf{k}_4 = e_1(\mathbf{r}_n + h\mathbf{k}_3) $$
+1. $k_1 = e_1(\mathbf{r}_n)$
+2. $k_2 = e_1(\mathbf{r}_n + \frac{h}{2}k_1)$
+3. $k_3 = e_1(\mathbf{r}_n + \frac{h}{2}k_2)$
+4. $k_4 = e_1(\mathbf{r}_n + h k_3)$
 
-$$ \mathbf{r}_{n+1} = \mathbf{r}_n + \frac{h}{6}(\mathbf{k}_1 + 2\mathbf{k}_2 + 2\mathbf{k}_3 + \mathbf{k}_4) $$
+$$
+\mathbf{r}_{n+1} = \mathbf{r}_n + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)
+$$
 
 **Crucial Implementation Detail**: Orientation Alignment.
 Since eigenvectors are unique only up to sign ($\pm e_1$), we must enforce continuity:
-$$ \text{if } \mathbf{k}_i \cdot \mathbf{k}_{i+1} < 0, \text{ then } \mathbf{k}_{i+1} \leftarrow -\mathbf{k}_{i+1} $$
+
+$$
+\text{if } k_i \cdot k_{i+1} < 0, \text{ then } k_{i+1} \leftarrow -k_{i+1}
+$$
 
 ---
 
